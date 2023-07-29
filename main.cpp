@@ -125,7 +125,7 @@ void arp_attack(pcap_t *handle, Mac attacker_mac, Mac sender_mac, const char* se
 
 
 int main(int argc, char* argv[]) {
-	if (argc < 3 || argc %2 != 0) {
+	if (argc < 4 || argc %2 != 0) {
 		fprintf(stderr, "Invalid number of arguments\n");
 		usage();
 		return -1;
