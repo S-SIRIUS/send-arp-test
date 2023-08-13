@@ -49,14 +49,14 @@ char* getMac(const char* iface){
 }
 
 #define MAC_ADDR_LEN 6
-Mac send_arp(pcap_t *handle, const char* attacker_ip, const char* sender_ip)
+Mac send_arp(pcap_t *handle, const char* my_mac,  const char* attacker_ip, const char* sender_ip)
 {
     EthArpPacket packet;
     struct pcap_pkthdr *header;
     const u_char *response;
 
     packet.eth_.dmac_ = Mac("ff:ff:ff:ff:ff:ff");
-    packet.eth_.smac_ = Mac("08:00:27:53:0c:ba");  // Substitute with your MAC Address
+    packet.eth_.smac_ = Mac(my_mac);  // Substitute with your MAC Address
     packet.eth_.type_ = htons(EthHdr::Arp);
 
     packet.arp_.hrd_ = htons(ArpHdr::ETHER);
@@ -64,7 +64,7 @@ Mac send_arp(pcap_t *handle, const char* attacker_ip, const char* sender_ip)
     packet.arp_.hln_ = Mac::SIZE;
     packet.arp_.pln_ = Ip::SIZE;
     packet.arp_.op_ = htons(ArpHdr::Request);
-    packet.arp_.smac_ = Mac("08:00:27:53:0c:ba");  // Substitute with your MAC Address
+    packet.arp_.smac_ = Mac(my_mac);  // Substitute with your MAC Address
     packet.arp_.sip_ = htonl(Ip(attacker_ip));
     packet.arp_.tmac_ = Mac("00:00:00:00:00:00");
     packet.arp_.tip_ = htonl(Ip(sender_ip));
@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
 	
 	int i=2;
 	for(i=2; i<argc; i+=2){
-    		Mac sender_mac = send_arp(handle, "192.168.0.106", argv[i]);
+    		Mac sender_mac = send_arp(handle, my_mac,  "192.168.0.106", argv[i]);
 	
 		arp_attack(handle, Mac(my_mac),sender_mac, argv[i], argv[i+1]); 
 
